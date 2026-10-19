@@ -64,10 +64,11 @@ ipch/
 *.cachefile
 
 # Visual Studio Code
- *.vscode
-  .vscode
-  .vscode/
- *.vscode/
+*.vscode
+.vscode
+.vscode/
+*.vscode/
+
 
 
 
