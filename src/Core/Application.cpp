@@ -36,72 +36,53 @@ void MainApplication::MainLoop()
     //@todo: Da cambiare
     glViewport(0,0, WINDOW_W, WINDOW_H);
 
-/*     unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    
-    //Check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED \n"
-                << infoLog << std::endl;
-    }
-
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    
-    //Shader Program, Serve per linkare i vari shader e creare un programma di shader
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    //Check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success)
-    {
-        glGetProgramInfoLog(shaderProgram,512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED \n"
-                << infoLog << std::endl;
-    }
-
-    //Le shader create non sono più necessarie dopo il linking, verrano eliminate appena accadrà il detach del shaderProgram
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-     */
-
     GLuint vertexShader = Shader::CreateShader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fragmentShader = Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
     GLuint shaderProgram = Shader::CreateShaderProgram(vertexShader, fragmentShader);
     
     //VBO significa Vertex Buffer Object, serve per passare i dati alla GPU 
     //VAO significa Vertex Array Object, è un insime di attributi di vertici
-    unsigned int VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    unsigned int VAO_1, VBO_1;
+    glGenVertexArrays(1, &VAO_1);
+    glGenBuffers(1, &VBO_1);
 
     //Collega il VAO per primo e poi il VBO, in questo modo il VAO salverà le configurazioni del VBO
-    glBindVertexArray(VAO);
+    glBindVertexArray(VAO_1);
 
     //Prende il buffer di vertici e lo passa alla GPU
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
    
+    //Configura il modo in cui OpenGL deve interpretare i dati del buffer
+    // 0 -> è l'indice del attributo che deve equivalere alla location del vertex shader
+    // 3 -> è il numero di componenti per vertice (x, y, z)
+    // GL_FLOAT -> è il tipo di dato dei componenti
+    // GL_FALSE -> indica se i dati devono essere normalizzati o meno
+    // 3 * sizeof(float) -> è la distanza tra i vertici consecutivi nel buffer (stride)
+    // (void*)0 -> è l'offset del primo componente del primo vertice nel buffer 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 );
     glEnableVertexAttribArray(0);
 
+    //unbind il VBO e il VAO per evitare modifiche accidentali
+    
+    unsigned int VAO_2, VBO_2;
+    glGenVertexArrays(1, &VAO_2);
+    glGenBuffers(1, &VBO_2);
+    
+    glBindVertexArray(VAO_2);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 );
+    glEnableVertexAttribArray(0);
+
+
+     //unbind il VBO e il VAO per evitare modifiche accidentali    
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
-    //Copia i vertici nel buffer
+
     // Main loop code
     while (!glfwWindowShouldClose(m_window))
     {
@@ -112,9 +93,14 @@ void MainApplication::MainLoop()
 		glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-        //Draw triangle
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
+        
+        //Draw first triangle 
+        glBindVertexArray(VAO_1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        //Draw second triangle
+        glBindVertexArray(VAO_2);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//Check e chiama gli eventi poi swappa i buffer
@@ -122,8 +108,13 @@ void MainApplication::MainLoop()
 		glfwSwapBuffers(m_window);
     } 
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    
+    glDeleteVertexArrays(1, &VAO_1);
+    glDeleteBuffers(1, &VBO_1);
+    
+    glDeleteVertexArrays(1, &VAO_2);
+    glDeleteBuffers(1, &VBO_2);
+    
     glDeleteProgram(shaderProgram);
 
 }

@@ -18,7 +18,7 @@ inline const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    " FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    " FragColor = vec4(.7f, 0.2f, 0.9f, 1.0f);\n"
     "}\n\0";
 
 struct GLFWwindow;
@@ -34,10 +34,16 @@ class MainApplication
     protected:
         GLFWwindow* m_window = nullptr;
 
-        float vertices[12] = {
+        float vertices1[12] = {
             0.f, 0.f, 0.0f, // bottom left
              0.5f, 0.0f, 0.0f, // bottom right
              0.5f,  0.5f, 0.0f  // top center
+        };
+
+        float vertices2[12] = {
+            0.f, 0.01f, 0.0f, // bottom left
+             0.5f, 0.51f, 0.0f, // bottom right
+             0.f,  0.51f, 0.0f  // top center
         };
 
         
