@@ -1,10 +1,9 @@
 #pragma once
-#include <glad/glad.h>
 
 const unsigned int WINDOW_W = 800;
 const unsigned int WINDOW_H = 600;
 
-
+//@todo: Andrà tolto non appena si implementerà il sistema di shader completo
 //VertexShader
 inline const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -13,6 +12,7 @@ inline const char *vertexShaderSource = "#version 330 core\n"
     " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
     "}\0";
 
+//@todo: Andrà tolto non appena si implementerà il sistema di shader completo
 //FragmentShader
 inline const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
@@ -55,15 +55,11 @@ class Shader
 {
     public:
     
-    GLuint CreateShader(GLenum shaderType, const char* source /*the shader source*/);
-    void CreateShaderProgram(unsigned int vertexShader, unsigned int fragmentShader);
+    static unsigned int CreateShader(unsigned int shaderType /*GLenum*/, const char* source /*the shader source*/);
+    static unsigned int CreateShaderProgram(unsigned int vertexShader, unsigned int fragmentShader);
     
-    protected:
-    void CheckShaderCompileError(unsigned int shader);
-    void CheckLinkingErrors(int shaderProgram);
-
-
-
-
+    private:
+    static void CheckShaderCompileError(unsigned int shader);
+    static void CheckLinkingErrors(int shaderProgram);
 
 };

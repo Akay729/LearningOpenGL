@@ -36,7 +36,7 @@ void MainApplication::MainLoop()
     //@todo: Da cambiare
     glViewport(0,0, WINDOW_W, WINDOW_H);
 
-    unsigned int vertexShader;
+/*     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
@@ -76,7 +76,11 @@ void MainApplication::MainLoop()
     //Le shader create non sono più necessarie dopo il linking, verrano eliminate appena accadrà il detach del shaderProgram
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-    
+     */
+
+    GLuint vertexShader = Shader::CreateShader(GL_VERTEX_SHADER, vertexShaderSource);
+    GLuint fragmentShader = Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+    GLuint shaderProgram = Shader::CreateShaderProgram(vertexShader, fragmentShader);
     
     //VBO significa Vertex Buffer Object, serve per passare i dati alla GPU 
     //VAO significa Vertex Array Object, è un insime di attributi di vertici
@@ -180,18 +184,27 @@ void Shader::CheckLinkingErrors(int shaderProgram)
     }
 }
 
-GLuint Shader::CreateShader(GLenum shaderType, const char* source)
+unsigned int Shader::CreateShader(unsigned int shaderType /*GLenum*/, const char* source)
 {
-    unsigned int shader;
-    shader = glCreateShader(shaderType);
+    unsigned int shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &source, NULL);
     glCompileShader(shader);
     CheckShaderCompileError(shader);
     return shader;
 }
 
-void Shader::CreateShaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
+unsigned int Shader::CreateShaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
 {
+    //Shader Program, Serve per linkare i vari shader e creare un programma di shader
+    unsigned int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    CheckLinkingErrors(shaderProgram);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    return shaderProgram;
 }
 
 void Shader::CheckShaderCompileError(unsigned int shader)
@@ -200,7 +213,8 @@ void Shader::CheckShaderCompileError(unsigned int shader)
     char infoLog[512];
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if(!success)
-    {
+    {   
+        //Dovrei far crashaare il programma
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED \n"
                 << infoLog << std::endl;
