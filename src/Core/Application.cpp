@@ -42,17 +42,21 @@ void MainApplication::MainLoop()
     
     //VBO significa Vertex Buffer Object, serve per passare i dati alla GPU 
     //VAO significa Vertex Array Object, è un insime di attributi di vertici
-    unsigned int VAO_1, VBO_1;
+    unsigned int VAO_1, VBO_1, EBO_1;
     glGenVertexArrays(1, &VAO_1);
     glGenBuffers(1, &VBO_1);
+    glGenBuffers(1, &EBO_1);
 
     //Collega il VAO per primo e poi il VBO, in questo modo il VAO salverà le configurazioni del VBO
     glBindVertexArray(VAO_1);
 
     //Prende il buffer di vertici e lo passa alla GPU
     glBindBuffer(GL_ARRAY_BUFFER, VBO_1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_1); // quasi usa GL_ELEMENT_ARRAY_BUFFER
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);// quasi usa GL_ELEMENT_ARRAY_BUFFER
+
     //Configura il modo in cui OpenGL deve interpretare i dati del buffer
     // 0 -> è l'indice del attributo che deve equivalere alla location del vertex shader
     // 3 -> è il numero di componenti per vertice (x, y, z)
@@ -63,25 +67,11 @@ void MainApplication::MainLoop()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 );
     glEnableVertexAttribArray(0);
 
+    //Da capire perchè non renderizza 
+
     //unbind il VBO e il VAO per evitare modifiche accidentali
-    
-    unsigned int VAO_2, VBO_2;
-    glGenVertexArrays(1, &VAO_2);
-    glGenBuffers(1, &VBO_2);
-    
-    glBindVertexArray(VAO_2);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-    
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 );
-    glEnableVertexAttribArray(0);
-
-
-     //unbind il VBO e il VAO per evitare modifiche accidentali    
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-    
 
     // Main loop code
     while (!glfwWindowShouldClose(m_window))
@@ -97,11 +87,9 @@ void MainApplication::MainLoop()
         
         //Draw first triangle 
         glBindVertexArray(VAO_1);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
-        //Draw second triangle
-        glBindVertexArray(VAO_2);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//Check e chiama gli eventi poi swappa i buffer
 		glfwPollEvents();
@@ -111,10 +99,7 @@ void MainApplication::MainLoop()
     
     glDeleteVertexArrays(1, &VAO_1);
     glDeleteBuffers(1, &VBO_1);
-    
-    glDeleteVertexArrays(1, &VAO_2);
-    glDeleteBuffers(1, &VBO_2);
-    
+    glDeleteBuffers(1, &EBO_1);
     glDeleteProgram(shaderProgram);
 
 }
@@ -153,6 +138,16 @@ void MainApplication::ProcessInput(GLFWwindow *window)
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, true);
+    }
+    
+    //FILL e WIREFRAME
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //GL_LINE per wireframe
+    }
+    if(glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+    {  
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //GL_FILL per fill
     }
 }
 

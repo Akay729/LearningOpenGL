@@ -34,18 +34,22 @@ class MainApplication
     protected:
         GLFWwindow* m_window = nullptr;
 
-        float vertices1[12] = {
-            0.f, 0.f, 0.0f, // bottom left
-             0.5f, 0.0f, 0.0f, // bottom right
-             0.5f,  0.5f, 0.0f  // top center
+        // Basta dare i vertici per creare il triangolo senza ripetere i vertici
+        // qua sevono solo i 4 vertici del quadrato
+        float vertices[12] = {
+            //First Triangle
+            0.f, 0.f, 0.0f,     // bottom left
+            0.5f, 0.0f, 0.0f,   // bottom right
+            0.5f, 0.5f, 0.0f,   // top right
+            0.0f, 0.5f, 0.0f   // top left
+
         };
 
-        float vertices2[12] = {
-            0.f, 0.01f, 0.0f, // bottom left
-             0.5f, 0.51f, 0.0f, // bottom right
-             0.f,  0.51f, 0.0f  // top center
+        //Ho pesto tempo perchè gli avevo messi come float e non come unsigned int...
+        unsigned int indicies[6] = {
+            0,1,2,
+            0,2,3
         };
-
         
         void InitWindow();
         void InitGLAD();
