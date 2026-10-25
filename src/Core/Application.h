@@ -21,6 +21,16 @@ inline const char *fragmentShaderSource = "#version 330 core\n"
     " FragColor = vec4(.7f, 0.2f, 0.9f, 1.0f);\n"
     "}\n\0";
 
+
+// Ex1
+inline const char *fragmentShaderSource2 = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    " FragColor = vec4(.15f, 0.18f, 0.29f, 1.0f);\n"
+    "}\n\0";
+//
+
 struct GLFWwindow;
 
 class MainApplication
@@ -36,13 +46,16 @@ class MainApplication
 
         // Basta dare i vertici per creare il triangolo senza ripetere i vertici
         // qua sevono solo i 4 vertici del quadrato
-        float vertices[12] = {
+        float vertices[18] = {
             //First Triangle
             0.f, 0.f, 0.0f,     // bottom left
             0.5f, 0.0f, 0.0f,   // bottom right
             0.5f, 0.5f, 0.0f,   // top right
-            0.0f, 0.5f, 0.0f   // top left
-
+            0.0f, 0.5f, 0.0f,   // top left
+            //Ex1
+            -0.5f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.0f
+            //
         };
 
         //Ho pesto tempo perchè gli avevo messi come float e non come unsigned int...
@@ -71,5 +84,27 @@ class Shader
     private:
     static void CheckShaderCompileError(unsigned int shader);
     static void CheckLinkingErrors(int shaderProgram);
+
+};
+
+class Mesh
+{
+    public:
+
+        void InitMesh(); 
+
+        unsigned int GetVBO() {return VBO;};
+        unsigned int GetVAO() {return VAO;};
+        unsigned int GetEBO() {return EBO;};
+
+        void SetVerticesNumber(float vertices);
+        void SetIndices(float IndexArray[]);
+
+
+    private:
+        unsigned int VBO{};
+        unsigned int VAO{};
+        unsigned int EBO{};
+        float vertices {};   
 
 };

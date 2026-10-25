@@ -39,6 +39,13 @@ void MainApplication::MainLoop()
     GLuint vertexShader = Shader::CreateShader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fragmentShader = Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
     GLuint shaderProgram = Shader::CreateShaderProgram(vertexShader, fragmentShader);
+
+    //Ex1
+    GLuint secondShaderProgram = Shader::CreateShaderProgram(
+        vertexShader,
+        Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource2)
+    );
+    //
     
     //VBO significa Vertex Buffer Object, serve per passare i dati alla GPU 
     //VAO significa Vertex Array Object, è un insime di attributi di vertici
@@ -64,10 +71,9 @@ void MainApplication::MainLoop()
     // GL_FALSE -> indica se i dati devono essere normalizzati o meno
     // 3 * sizeof(float) -> è la distanza tra i vertici consecutivi nel buffer (stride)
     // (void*)0 -> è l'offset del primo componente del primo vertice nel buffer 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 );
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 ); // (void*)0 è un puntatore vuoto nullo
     glEnableVertexAttribArray(0);
 
-    //Da capire perchè non renderizza 
 
     //unbind il VBO e il VAO per evitare modifiche accidentali
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -87,9 +93,12 @@ void MainApplication::MainLoop()
         
         //Draw first triangle 
         glBindVertexArray(VAO_1);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-
+        
+        //Ex1
+        glUseProgram(secondShaderProgram);
+        glDrawArrays(GL_TRIANGLES, 4, 3);
+        //
 
 		//Check e chiama gli eventi poi swappa i buffer
 		glfwPollEvents();
@@ -102,6 +111,9 @@ void MainApplication::MainLoop()
     glDeleteBuffers(1, &EBO_1);
     glDeleteProgram(shaderProgram);
 
+    //Ex 1
+    glDeleteProgram(secondShaderProgram);
+    //
 }
 
 void MainApplication::CleanUp()
@@ -156,19 +168,6 @@ void MainApplication::FrammebufferSizeCallback(GLFWwindow *window, int width, in
     glViewport(0,0, width, height);
 }
 
-void Shader::CheckLinkingErrors(int shaderProgram)
-{
-    //Check for linking errors
-    int success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success)
-    {
-        glGetProgramInfoLog(shaderProgram,512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED \n"
-                << infoLog << std::endl;
-    }
-}
 
 unsigned int Shader::CreateShader(unsigned int shaderType /*GLenum*/, const char* source)
 {
@@ -187,7 +186,7 @@ unsigned int Shader::CreateShaderProgram(unsigned int vertexShader, unsigned int
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
     CheckLinkingErrors(shaderProgram);
-
+    
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     return shaderProgram;
@@ -203,6 +202,61 @@ void Shader::CheckShaderCompileError(unsigned int shader)
         //Dovrei far crashaare il programma
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED \n"
+        << infoLog << std::endl;
+    }
+}
+
+void Shader::CheckLinkingErrors(int shaderProgram)
+{
+    //Check for linking errors
+    int success;
+    char infoLog[512];
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if(!success)
+    {
+        glGetProgramInfoLog(shaderProgram,512, NULL, infoLog);
+        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED \n"
                 << infoLog << std::endl;
     }
+}
+
+void Mesh::InitMesh()
+{
+    
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    //Collega il VAO per primo e poi il VBO, in questo modo il VAO salverà le configurazioni del VBO
+    glBindVertexArray(VAO);
+
+    //Prende il buffer di vertici e lo passa alla GPU
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+   
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // quasi usa GL_ELEMENT_ARRAY_BUFFER
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);// quasi usa GL_ELEMENT_ARRAY_BUFFER
+
+    //Configura il modo in cui OpenGL deve interpretare i dati del buffer
+    // 0 -> è l'indice del attributo che deve equivalere alla location del vertex shader
+    // 3 -> è il numero di componenti per vertice (x, y, z)
+    // GL_FLOAT -> è il tipo di dato dei componenti
+    // GL_FALSE -> indica se i dati devono essere normalizzati o meno
+    // 3 * sizeof(float) -> è la distanza tra i vertici consecutivi nel buffer (stride)
+    // (void*)0 -> è l'offset del primo componente del primo vertice nel buffer 
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 ); // (void*)0 è un puntatore vuoto nullo
+    glEnableVertexAttribArray(0);
+
+
+    //unbind il VBO e il VAO per evitare modifiche accidentali
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Mesh::SetVerticesNumber(float vertices)
+{
+}
+
+void Mesh::SetIndices(float IndexArray[])
+{
 }
