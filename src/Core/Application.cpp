@@ -46,40 +46,28 @@ void MainApplication::MainLoop()
         Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource2)
     );
     //
+
     
-    //VBO significa Vertex Buffer Object, serve per passare i dati alla GPU 
-    //VAO significa Vertex Array Object, è un insime di attributi di vertici
-    unsigned int VAO_1, VBO_1, EBO_1;
-    glGenVertexArrays(1, &VAO_1);
-    glGenBuffers(1, &VBO_1);
-    glGenBuffers(1, &EBO_1);
+    std::vector<unsigned int> ind = {
+        0,1,2,
+        0,2,3
+    };
 
-    //Collega il VAO per primo e poi il VBO, in questo modo il VAO salverà le configurazioni del VBO
-    glBindVertexArray(VAO_1);
+    std::vector<Vertex> vertices = {
+            //First Triangle
+            {{0.f, 0.f, 0.0f}},     // bottom left
+            {{0.5f, 0.0f, 0.0f}},   // bottom right
+            {{0.5f, 0.5f, 0.0f}},   // top right
+            {{0.0f, 0.5f, 0.0f}},   // top left
+            //Ex1
+            {{-0.5f, 0.0f, 0.0f}},
+            {{-0.5f, -0.5f, 0.0f}}
+            //
+        };
 
-    //Prende il buffer di vertici e lo passa alla GPU
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-   
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_1); // quasi usa GL_ELEMENT_ARRAY_BUFFER
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);// quasi usa GL_ELEMENT_ARRAY_BUFFER
+    Mesh _Mesh = Mesh(vertices, ind);
 
-    //Configura il modo in cui OpenGL deve interpretare i dati del buffer
-    // 0 -> è l'indice del attributo che deve equivalere alla location del vertex shader
-    // 3 -> è il numero di componenti per vertice (x, y, z)
-    // GL_FLOAT -> è il tipo di dato dei componenti
-    // GL_FALSE -> indica se i dati devono essere normalizzati o meno
-    // 3 * sizeof(float) -> è la distanza tra i vertici consecutivi nel buffer (stride)
-    // (void*)0 -> è l'offset del primo componente del primo vertice nel buffer 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 ); // (void*)0 è un puntatore vuoto nullo
-    glEnableVertexAttribArray(0);
-
-
-    //unbind il VBO e il VAO per evitare modifiche accidentali
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    // Main loop code
+// Main loop code
     while (!glfwWindowShouldClose(m_window))
     {
         //Input
@@ -92,7 +80,7 @@ void MainApplication::MainLoop()
         glUseProgram(shaderProgram);
         
         //Draw first triangle 
-        glBindVertexArray(VAO_1);
+        glBindVertexArray(_Mesh.GetVAO());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
         
         //Ex1
@@ -106,9 +94,7 @@ void MainApplication::MainLoop()
     } 
 
     
-    glDeleteVertexArrays(1, &VAO_1);
-    glDeleteBuffers(1, &VBO_1);
-    glDeleteBuffers(1, &EBO_1);
+    _Mesh.DeleteMesh();
     glDeleteProgram(shaderProgram);
 
     //Ex 1
@@ -220,7 +206,18 @@ void Shader::CheckLinkingErrors(int shaderProgram)
     }
 }
 
-void Mesh::InitMesh()
+Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &inds)
+    : vertices(verts), indicies(inds)
+{
+    SetUp();
+}
+
+Mesh::~Mesh()
+{
+    DeleteMesh();
+}
+
+void Mesh::SetUp()
 {
     
     glGenVertexArrays(1, &VAO);
@@ -232,9 +229,75 @@ void Mesh::InitMesh()
 
     //Prende il buffer di vertici e lo passa alla GPU
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
    
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // quasi usa GL_ELEMENT_ARRAY_BUFFER
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(unsigned int), indicies.data(), GL_STATIC_DRAW);// quasi usa GL_ELEMENT_ARRAY_BUFFER
+
+    //Configura il modo in cui OpenGL deve interpretare i dati del buffer
+    // 0 -> è l'indice del attributo che deve equivalere alla location del vertex shader
+    // 3 -> è il numero di componenti per vertice (x, y, z)
+    // GL_FLOAT -> è il tipo di dato dei componenti
+    // GL_FALSE -> indica se i dati devono essere normalizzati o meno
+    // 3 * sizeof(float) -> è la distanza tra i vertici consecutivi nel buffer (stride)
+    // (void*)0 -> è l'offset del primo componente del primo vertice nel buffer 
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0 ); // (void*)0 è un puntatore vuoto nullo
+    glEnableVertexAttribArray(0);
+
+
+    //unbind il VBO e il VAO per evitare modifiche accidentali
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Mesh::DeleteMesh()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    //VBO significa Vertex Buffer Object, serve per passare i dati alla GPU 
+    //VAO significa Vertex Array Object, è un insime di attributi di vertici
+    unsigned int VAO_1, VBO_1, EBO_1;
+    glGenVertexArrays(1, &VAO_1);
+    glGenBuffers(1, &VBO_1);
+    glGenBuffers(1, &EBO_1);
+
+    //Collega il VAO per primo e poi il VBO, in questo modo il VAO salverà le configurazioni del VBO
+    glBindVertexArray(VAO_1);
+
+    //Prende il buffer di vertici e lo passa alla GPU
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+   
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_1); // quasi usa GL_ELEMENT_ARRAY_BUFFER
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);// quasi usa GL_ELEMENT_ARRAY_BUFFER
 
     //Configura il modo in cui OpenGL deve interpretare i dati del buffer
@@ -251,12 +314,4 @@ void Mesh::InitMesh()
     //unbind il VBO e il VAO per evitare modifiche accidentali
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-}
-
-void Mesh::SetVerticesNumber(float vertices)
-{
-}
-
-void Mesh::SetIndices(float IndexArray[])
-{
-}
+*/
