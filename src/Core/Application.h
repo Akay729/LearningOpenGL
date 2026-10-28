@@ -57,33 +57,34 @@ class MainApplication
 //VertexShader
 inline const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "out vec4 vertexColor;"
     "void main()\n"
     "{\n"
-    " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    " gl_Position = vec4(aPos, 1.0);\n"
+    " vertexColor = vec4(.7f, 0.2f, 0.9f, 1.0f);\n"
     "}\0";
 
 //@todo: Andrà tolto non appena si implementerà il sistema di shader completo
 //FragmentShader
 inline const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
+    //"in vec4 vertexColor;"
+    "uniform vec4 shaderColor;" //è una gloabal variabile.
     "void main()\n"
     "{\n"
-    " FragColor = vec4(.7f, 0.2f, 0.9f, 1.0f);\n"
+    " FragColor = shaderColor;"
+    //" FragColor = vertexColor"
     "}\n\0";
 
 
-// Ex1
+/* Ex1
 inline const char *fragmentShaderSource2 = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    " FragColor = vec4(.15f, 0.18f, 0.29f, 1.0f);\n"
+    " FragColor = vec4(.70f, 0.18f, 0.29f, 1.0f);\n"
     "}\n\0";
-//
-
-
-
-
+*/
 
 class Shader
 {

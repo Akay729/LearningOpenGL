@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <cmath>
 
 void MainApplication::Run()
 {
@@ -40,12 +41,12 @@ void MainApplication::MainLoop()
     GLuint fragmentShader = Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
     GLuint shaderProgram = Shader::CreateShaderProgram(vertexShader, fragmentShader);
 
-    //Ex1
+/*     //Ex1
     GLuint secondShaderProgram = Shader::CreateShaderProgram(
         vertexShader,
         Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource2)
     );
-    //
+    // */
 
     
     std::vector<unsigned int> ind = {
@@ -79,14 +80,19 @@ void MainApplication::MainLoop()
 
         glUseProgram(shaderProgram);
         
+        float timeValue =  glfwGetTime();
+        float greenValue = sin(timeValue) / 2.0f + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "shaderColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
         //Draw first triangle 
         glBindVertexArray(_Mesh.GetVAO());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
         
-        //Ex1
+/*         //Ex1
         glUseProgram(secondShaderProgram);
         glDrawArrays(GL_TRIANGLES, 4, 3);
-        //
+        // */
 
 		//Check e chiama gli eventi poi swappa i buffer
 		glfwPollEvents();
@@ -97,9 +103,9 @@ void MainApplication::MainLoop()
     _Mesh.DeleteMesh();
     glDeleteProgram(shaderProgram);
 
-    //Ex 1
+/*     //Ex 1
     glDeleteProgram(secondShaderProgram);
-    //
+    // */
 }
 
 void MainApplication::CleanUp()
@@ -155,6 +161,8 @@ void MainApplication::FrammebufferSizeCallback(GLFWwindow *window, int width, in
 }
 
 
+
+// --- SHADER ---
 unsigned int Shader::CreateShader(unsigned int shaderType /*GLenum*/, const char* source)
 {
     unsigned int shader = glCreateShader(shaderType);
@@ -206,6 +214,9 @@ void Shader::CheckLinkingErrors(int shaderProgram)
     }
 }
 
+
+
+// --- MESH ---
 Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &inds)
     : vertices(verts), indicies(inds)
 {
