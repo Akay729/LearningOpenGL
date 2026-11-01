@@ -2,8 +2,16 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 AColoror;
 out vec3 vertexColor;
+
+uniform vec3 offSet;
+
+vec4 currenPos;
+
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);
+    //vec3 newPos = offSet * aPos;
+    vec3 newPos = offSet + aPos;
+
+    gl_Position = vec4(newPos, 1.0);
     vertexColor = AColoror;
 };

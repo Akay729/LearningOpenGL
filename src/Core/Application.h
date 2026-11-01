@@ -15,6 +15,9 @@ class MainApplication
 		
     protected:
         GLFWwindow* m_window = nullptr;
+        const float Speed = 0.005f;
+        float offSetX {0.f};
+        float offSetY {0.f};
 
         /*
         // Basta dare i vertici per creare il triangolo senza ripetere i vertici

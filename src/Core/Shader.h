@@ -21,10 +21,10 @@ class Shader
     unsigned int CreateShader(unsigned int shaderType /*GLenum*/, const char* source /*the shader source*/);
     unsigned int CreateShaderProgram(unsigned int vShader, unsigned int fShader);
 
-    unsigned int GetID() { return ID;};
-    void Use() { glUseProgram(ID);};
+    unsigned int *GetID() { return &ID;};
+    void Use() { glUseProgram(*GetID());};
 
-    void DeleteShaderProgram() { glDeleteProgram(ID); };
+    void DeleteShaderProgram() { glDeleteProgram(*GetID()); };
 
     private:
 

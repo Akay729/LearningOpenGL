@@ -51,11 +51,10 @@ void MainApplication::MainLoop()
     );
     // */
 
-    Shader myShader("src/Core/shader.vs", "src/Core/shader.fs");
+    Shader currentShader("src/Core/shader.vs", "src/Core/shader.fs");
 
     std::vector<unsigned int> ind = {
-        0,1,2,
-        0,2,3
+        0,1,2
     };
 
     std::vector<Vertex> vertices = {
@@ -85,8 +84,8 @@ void MainApplication::MainLoop()
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "shaderColor");
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
  */
-        
-        myShader.Use();
+        glUniform3f(glGetUniformLocation(*currentShader.GetID(), "offSet"), offSetX, offSetY, 0.f);
+        currentShader.Use();
  
         //Draw first triangle 
         glBindVertexArray(_Mesh.GetVAO());
@@ -104,6 +103,7 @@ void MainApplication::MainLoop()
 
     
     _Mesh.DeleteMesh();
+    currentShader.DeleteShaderProgram();
 
     //glDeleteProgram(shaderProgram);
 
@@ -156,6 +156,26 @@ void MainApplication::ProcessInput(GLFWwindow *window)
     if(glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
     {  
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //GL_FILL per fill
+    }
+/*     if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+    {
+        n = n* -1;        
+    } */
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        offSetY += Speed;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        offSetY -= Speed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        offSetX -= Speed;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        offSetX += Speed;
     }
 }
 
