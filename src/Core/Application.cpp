@@ -27,7 +27,7 @@ void MainApplication::InitWindow()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
     
 	//Creazione Finestra con relativo check di errore
-	m_window = glfwCreateWindow(WINDOW_W, WINDOW_H, "test window", NULL, NULL);
+	m_window = glfwCreateWindow(WINDOW_W, WINDOW_H, "KayEngine v0.0.1", NULL, NULL);
     CheckWindowCreation(m_window);
 
     glfwMakeContextCurrent(m_window);
@@ -39,10 +39,11 @@ void MainApplication::MainLoop()
     //@todo: Da cambiare
     glViewport(0,0, WINDOW_W, WINDOW_H);
 
-    GLuint vertexShader = Shader::CreateShader(GL_VERTEX_SHADER, vertexShaderSource);
+    //@todo: Da cambiare, le shader dovrebbero essere caricati da file esterni e non hardcodati nel codice sorgente
+/*     GLuint vertexShader = Shader::CreateShader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fragmentShader = Shader::CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
     GLuint shaderProgram = Shader::CreateShaderProgram(vertexShader, fragmentShader);
-
+ */
 /*     //Ex1
     GLuint secondShaderProgram = Shader::CreateShaderProgram(
         vertexShader,
@@ -50,7 +51,8 @@ void MainApplication::MainLoop()
     );
     // */
 
-    
+    Shader myShader("src/Core/shader.vs", "src/Core/shader.fs");
+
     std::vector<unsigned int> ind = {
         0,1,2,
         0,2,3
@@ -76,13 +78,16 @@ void MainApplication::MainLoop()
 		glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+/*         glUseProgram(shaderProgram);
         
         float timeValue =  glfwGetTime();
         float greenValue = sin(timeValue) / 2.0f + 0.5f;
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "shaderColor");
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
+ */
+        
+        myShader.Use();
+ 
         //Draw first triangle 
         glBindVertexArray(_Mesh.GetVAO());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
@@ -99,7 +104,8 @@ void MainApplication::MainLoop()
 
     
     _Mesh.DeleteMesh();
-    glDeleteProgram(shaderProgram);
+
+    //glDeleteProgram(shaderProgram);
 
 /*     //Ex 1
     glDeleteProgram(secondShaderProgram);
@@ -269,29 +275,6 @@ void Mesh::DeleteMesh()
     glDeleteBuffers(1, &EBO);
 }
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /*

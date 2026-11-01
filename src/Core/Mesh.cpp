@@ -39,6 +39,8 @@ void Mesh::SetUp()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0 ); // (void*)0 è un puntatore vuoto nullo
     glEnableVertexAttribArray(0);
 
+    //Offset del campo color all'interno della struct Vertex 
+    // in questo caso è 3 * sizeof(float) perché il campo color viene dopo il campo position che ha 3 float
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, color)) );
     glEnableVertexAttribArray(1);
 

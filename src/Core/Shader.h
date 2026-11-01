@@ -5,39 +5,29 @@
 
 //-- Shader Stuff
 
-//@todo: Andrà tolto non appena si implementerà il sistema di shader completo
-//VertexShader
-inline const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec3 AColoror;\n"
-    "out vec3 vertexColor;"
-    "void main()\n"
-    "{\n"
-    " gl_Position = vec4(aPos, 1.0);\n"
-    " vertexColor = AColoror;\n"
-    "}\0";
-
-//@todo: Andrà tolto non appena si implementerà il sistema di shader completo
-//FragmentShader
-inline const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "in vec3 vertexColor;"
-    "uniform vec4 shaderColor;" //è una gloabal variabile.
-    "void main()\n"
-    "{\n"
-    //" FragColor = shaderColor;"
-    " FragColor = vec4(vertexColor, 1.0);"
-    "}\n\0";
-
-
 class Shader
 {
     public:
+
+    unsigned int vertexShader;
+    unsigned int fragmentShader;
+
+    unsigned int ID;
     
-    static unsigned int CreateShader(unsigned int shaderType /*GLenum*/, const char* source /*the shader source*/);
-    static unsigned int CreateShaderProgram(unsigned int vertexShader, unsigned int fragmentShader);
+    // Constructor per la shader, prende in input i percorsi dei file contenenti il codice sorgente degli shader
+    Shader(const char* vertexPath, const char* fragmentPath);
+    ~Shader() { glDeleteProgram(ID); };
     
+    unsigned int CreateShader(unsigned int shaderType /*GLenum*/, const char* source /*the shader source*/);
+    unsigned int CreateShaderProgram(unsigned int vShader, unsigned int fShader);
+
+    unsigned int GetID() { return ID;};
+    void Use() { glUseProgram(ID);};
+
+    void DeleteShaderProgram() { glDeleteProgram(ID); };
+
     private:
+
     static void CheckShaderCompileError(unsigned int shader);
     static void CheckLinkingErrors(int shaderProgram);
 
