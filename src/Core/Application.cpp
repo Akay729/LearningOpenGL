@@ -50,20 +50,15 @@ void MainApplication::MainLoop()
 
     
     std::vector<unsigned int> ind = {
-        0,1,2,
-        0,2,3
+        0,1,2
     };
 
     std::vector<Vertex> vertices = {
-            //First Triangle
-            {{0.f, 0.f, 0.0f}},     // bottom left
-            {{0.5f, 0.0f, 0.0f}},   // bottom right
-            {{0.5f, 0.5f, 0.0f}},   // top right
-            {{0.0f, 0.5f, 0.0f}},   // top left
-            //Ex1
-            {{-0.5f, 0.0f, 0.0f}},
-            {{-0.5f, -0.5f, 0.0f}}
-            //
+            //Location (x,y,z), Color (r,g,b)
+            {{0.f, 0.f, 0.0f}, {1.0f, 0.0f, 0.0f}},     // bottom left
+            {{0.5f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},   // bottom right
+            {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},   // top right
+            {{0.0f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}}    // top left
         };
 
     Mesh _Mesh = Mesh(vertices, ind);
@@ -254,6 +249,9 @@ void Mesh::SetUp()
     // (void*)0 -> è l'offset del primo componente del primo vertice nel buffer 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0 ); // (void*)0 è un puntatore vuoto nullo
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, color)) );
+    glEnableVertexAttribArray(1);
 
 
     //unbind il VBO e il VAO per evitare modifiche accidentali
