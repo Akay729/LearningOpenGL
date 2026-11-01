@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
+#include <Mesh.h>
+#include <Shader.h> 
 
 void MainApplication::Run()
 {
@@ -50,7 +52,8 @@ void MainApplication::MainLoop()
 
     
     std::vector<unsigned int> ind = {
-        0,1,2
+        0,1,2,
+        0,2,3
     };
 
     std::vector<Vertex> vertices = {
@@ -58,7 +61,7 @@ void MainApplication::MainLoop()
             {{0.f, 0.f, 0.0f}, {1.0f, 0.0f, 0.0f}},     // bottom left
             {{0.5f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},   // bottom right
             {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},   // top right
-            {{0.0f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}}    // top left
+            {{0.0f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.0f}}    // top left
         };
 
     Mesh _Mesh = Mesh(vertices, ind);
@@ -156,9 +159,9 @@ void MainApplication::FrammebufferSizeCallback(GLFWwindow *window, int width, in
 }
 
 
-
+/* 
 // --- SHADER ---
-unsigned int Shader::CreateShader(unsigned int shaderType /*GLenum*/, const char* source)
+unsigned int Shader::CreateShader(unsigned int shaderType /*GLenum*//*, const char* source)
 {
     unsigned int shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &source, NULL);
@@ -208,10 +211,10 @@ void Shader::CheckLinkingErrors(int shaderProgram)
                 << infoLog << std::endl;
     }
 }
+ */
 
 
-
-// --- MESH ---
+/* // --- MESH ---
 Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &inds)
     : vertices(verts), indicies(inds)
 {
@@ -265,7 +268,7 @@ void Mesh::DeleteMesh()
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 }
-
+ */
 
 
 

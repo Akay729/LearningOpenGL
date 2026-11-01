@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 const unsigned int WINDOW_W = 800;
 const unsigned int WINDOW_H = 600;
 
@@ -55,7 +53,7 @@ class MainApplication
 
 //@todo: Andrà tolto non appena si implementerà il sistema di shader completo
 //VertexShader
-inline const char *vertexShaderSource = "#version 330 core\n"
+/* inline const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec3 AColoror;\n"
     "out vec3 vertexColor;"
@@ -76,7 +74,7 @@ inline const char *fragmentShaderSource = "#version 330 core\n"
     //" FragColor = shaderColor;"
     " FragColor = vec4(vertexColor, 1.0);"
     "}\n\0";
-
+ */
 
 /* Ex1
 inline const char *fragmentShaderSource2 = "#version 330 core\n"
@@ -87,11 +85,11 @@ inline const char *fragmentShaderSource2 = "#version 330 core\n"
     "}\n\0";
 */
 
-class Shader
+/* class Shader
 {
     public:
     
-    static unsigned int CreateShader(unsigned int shaderType /*GLenum*/, const char* source /*the shader source*/);
+    static unsigned int CreateShader(unsigned int shaderType /*GLenum*//*, const char* source /*the shader source*//*);
     static unsigned int CreateShaderProgram(unsigned int vertexShader, unsigned int fragmentShader);
     
     private:
@@ -99,9 +97,9 @@ class Shader
     static void CheckLinkingErrors(int shaderProgram);
 
 };
+ */
 
-
-
+/*
 //-- Mesh Stuff
 struct Vertex
 {
@@ -131,3 +129,4 @@ class Mesh
         void DeleteMesh();
 
 };
+*/

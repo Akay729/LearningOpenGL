@@ -12,7 +12,8 @@ LIBS     = $(shell pkg-config --libs glfw3) -lGL -ldl
 CFLAGS   = $(shell pkg-config --cflags glfw3)
 
 TARGET   = KayEngine
-SOURCES      = src/main.cpp src/glad.c src/Core/Application.cpp
+#@todo Trovare un altro modo per includere i vari cpp senza doverli scrivere tutti a mano
+SOURCES  = src/main.cpp src/glad.c src/Core/Application.cpp src/Core/Mesh.cpp src/Core/Shader.cpp	
 
 all: $(TARGET)
 
